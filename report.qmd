@@ -1,27 +1,72 @@
 ---
-title: "report"
+title: "Behind the Lyrics: Unveiling Singer and User Insights on Music to Scrape"
 author: "Paulo Mota"
-format: pdf
+format: 
+    pdf:
+      toc: true
+      toc-depth: 3
+      toc-title: Table of contents
+   
+header-includes:
+  - \usepackage{fancyhdr}
+  - \usepackage{graphicx}
+  - \usepackage{eso-pic}
+  - \usepackage{tikz}
+  - \AtBeginDocument{\thispagestyle{empty}\begin{tikzpicture}[remember picture,overlay]
+          \node at (current page.south) [yshift=6cm] {\includegraphics[width=0.25\paperwidth,height=0.25\paperheight,keepaspectratio]{logo.png}};
+          \node at (current page.center) [yshift=5cm] [anchor=north,yshift=-2cm] {\Huge\textbf{Behind the Lyrics}};
+          \node at (current page.center) [yshift=3cm] [anchor=north,yshift=-2cm] {\huge\textbf{Unveiling Singer and User Insights on Music to Scrape}};
+          \node at (current page.south) [yshift=5cm] [anchor=north,yshift=-2cm] {\normalsize\textbf{February 2024}};
+          \end{tikzpicture}\clearpage}
 editor: visual
 ---
 
-## Quarto
+## Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+Streaming music platforms are really popular nowadays, users who is looking for their favorites songs to listen in routine activities during the day like work, relax, party, working out, etc. In other hand, singers using the same platform to share and promote new songs in order to rise the popularity and profits. Overall, it is a high demand platform with a lots of information about songs, singers and users data.
 
-## Running Code
+## Data Source
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this
+Our data provider is Music to Scrap website, it is a platform that mimics the dynamics of the music industry. This website was made to be scraped, and it has a good API feature that could be used to grab data as well.
 
 ```{r}
 #| echo: false
-2 * 2
+#| warning: false
+# Load the required library
+library(httr)
+library(dplyr)
+
+# Specify the URL of the API
+api_url <- "https://api.music-to-scrape.org"
+
+# Remember, the documentation is available at https://api.music-to-scrape.org/docs!
+
+# From that API, we can pick an endpoint - think of it as a website, but then 
+# for computers to read!
+
+# Here, we extract the weekly top 15 songs.
+
+# Send an HTTP GET request to the API
+response <- GET(paste0(api_url, '/charts/top-tracks?week=42&year=2023'))
+
+# Check if the request was successful
+if (response$status_code == 200) {
+    # Parse the JSON response
+    data <- content(response, "parsed")
+    
+    # Compile data in a table and select columns
+    song_data <- data$chart %>% bind_rows() %>% select(name, artist)
+    
+} else {
+    cat("Failed to retrieve data. Status code:", response$status_code, "\n")
+    song_data <- NULL
+}
+                
+knitr::kable(head(song_data,n=4),
+             format = "html",
+             caption = "Most popular tracks on the third week of October in 2023")
 ```
+
+\
 
 The `echo: false` option disables the printing of code (only output is displayed).
