@@ -67,6 +67,14 @@ knitr::kable(head(song_data,n=4),
              caption = "Most popular tracks on the third week of October in 2023")
 ```
 
-\
+### Dataset
 
-The `echo: false` option disables the printing of code (only output is displayed).
+For this analysis we are going to scrape in real time several parts of the website to enhance our analysis. The first part will be scrapping the important data for the singer perspective and explain why.
+
+## Analysis & Plots
+
+### Singer Perspective 
+
+### User Perspective 
+
+## Conclusion
